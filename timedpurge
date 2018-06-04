@@ -2,7 +2,12 @@
 DAYS="30"
 TARGET="/var/log/package"
 
-# Targets $TARGET directory for purging file older than $DAYS.
+# Targets $TARGET directory for purging single files older than $DAYS.
+#
+# Designed for systems where you store 1 file a day in a directory and you
+# want to keep it filled with last n files/days (i.e. 2018-01-01.log), not just
+# purging by date (i.e. find /var/log/package/* -mtime +30 -exec echo {} \;) 
+#
 # Once installed somewhere (crontab, other scripts or any other triggers)
 # you could freeze real operations on files by creating a temporary .purgelock 
 # file into target directory. Output available for logging and debugging.
