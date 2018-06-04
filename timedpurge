@@ -1,0 +1,32 @@
+#!/bin/bash
+DAYS="30"
+TARGET="/var/log/package"
+
+# Core function
+purge () {
+        for file in $(cat /tmp/.tmpall | grep -vf /tmp/.tmpsave); do
+            if [ "$1" == "ro" ]; then
+                echo "$TARGET"/$file
+            elif [ "$1" == "rw" ]; then
+                rm -v "$TARGET"/$file
+            fi
+        done
+}
+
+ls -l  "$TARGET" | awk '{ print $NF }' | tail -n +2 > /tmp/.tmpall
+ls -tl "$TARGET" | awk '{ print $NF }' | tail -n +2 | head -n $DAYS > /tmp/.tmpsave
+ALL=$(wc -l /tmp/.tmpall | awk '{ print $1 }')
+
+if [ "$DAYS" -lt "$ALL" ]; then
+   if [ ! -f $TARGET/.purgelock ]; then
+        echo Purging file\(s\) by date limit on retention rules:
+        purge rw
+   else
+        echo Warning: file\(s\) *NOT*  purged on $TARGET \(.purgelock present\):
+        purge ro
+   fi
+else
+        echo Info: no files to purge in $TARGET
+fi
+
+rm /tmp/.tmpsave /tmp/.tmpall
