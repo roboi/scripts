@@ -2,6 +2,14 @@
 DAYS="30"
 TARGET="/var/log/package"
 
+# Targets $TARGET directory for purging file older than $DAYS.
+# Once installed somewhere (crontab, other scripts or any other triggers)
+# you could freeze real operations on files by creating a temporary .purgelock 
+# file into target directory. Output available for logging and debugging.
+#
+# I.e.: 
+# $ timedpurge >> /var/log/timedpurge.log  2>&1
+
 # Core function
 purge () {
         for file in $(cat /tmp/.tmpall | grep -vf /tmp/.tmpsave); do
@@ -13,13 +21,15 @@ purge () {
         done
 }
 
+# Catch infos
 ls -l  "$TARGET" | awk '{ print $NF }' | tail -n +2 > /tmp/.tmpall
 ls -tl "$TARGET" | awk '{ print $NF }' | tail -n +2 | head -n $DAYS > /tmp/.tmpsave
 ALL=$(wc -l /tmp/.tmpall | awk '{ print $1 }')
 
+# Put together
 if [ "$DAYS" -lt "$ALL" ]; then
    if [ ! -f $TARGET/.purgelock ]; then
-        echo Purging file\(s\) by date limit on retention rules:
+        echo Purging file\(s\) by date limit for retention rules:
         purge rw
    else
         echo Warning: file\(s\) *NOT*  purged on $TARGET \(.purgelock present\):
@@ -29,4 +39,5 @@ else
         echo Info: no files to purge in $TARGET
 fi
 
+# Cleanup
 rm /tmp/.tmpsave /tmp/.tmpall
