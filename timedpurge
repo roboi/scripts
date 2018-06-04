@@ -28,7 +28,7 @@ purge () {
 
 # Catch infos
 ls -l  "$TARGET" | awk '{ print $NF }' | tail -n +2 > /tmp/.tmpall
-ls -tl "$TARGET" | awk '{ print $NF }' | tail -n +2 | head -n $DAYS > /tmp/.tmpsave
+ls -lr "$TARGET" | awk '{ print $NF }' | tail -n +2 | head -n $DAYS > /tmp/.tmpsave
 ALL=$(wc -l /tmp/.tmpall | awk '{ print $1 }')
 
 # Put together
