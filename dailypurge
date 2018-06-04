@@ -13,7 +13,7 @@ TARGET="/var/log/package"
 # file into target directory. Output available for logging and debugging.
 #
 # I.e.: 
-# $ timedpurge >> /var/log/timedpurge.log  2>&1
+# $ dailypurge >> /var/log/dailypurge.log  2>&1
 
 # Core function
 purge () {
