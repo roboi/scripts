@@ -1,0 +1,21 @@
+#!/bin/bash
+# This script is designed to be started after logs are delivered 
+# to elasticsearch. Then it waits 'till registry offset reaches file size.
+# It can be also launched by hand.
+
+if [[ "$#" < 1 ]]; then
+	echo "Usage: $0 <filebeat_registry_file>"
+	exit 1
+else
+	LFNAME=$(cat "$1" | cut -d, -f1 | cut -d: -f2 | sed 's/\"//g')
+	OFFSET=$(cat "$1" | cut -d, -f2 | cut -d: -f2)
+	LFSIZE=$(stat -c%s $LFNAME)
+
+	if [ -e $LFNAME ] && [ $OFFSET == $LFSIZE ]; then
+		echo "Flushing $LFNAME ($LFSIZE)"
+		rm "$LFNAME"
+	else
+		sleep 30
+		exec $0 $1
+	fi
+fi
