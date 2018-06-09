@@ -15,13 +15,12 @@ else
 		if [ -e "$LFNAME" ]; then
 			LFSIZE=$(stat -c%s $LFNAME)
 		else
-			echo "Error: log file not found."
+			echo "Error: log file not available."
 			exit 1
 		fi
 
-		echo "$(date): Starting filebeat log watch"
 		if [ -e $LFNAME ] && [ $OFFSET == $LFSIZE ]; then
-			echo "$(date): Flushing $LFNAME ($LFSIZE)"
+			echo "$(date): Flushing harvested $LFNAME ($LFSIZE)"
 			rm "$LFNAME"
 		else
 			sleep 30
