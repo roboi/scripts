@@ -20,11 +20,13 @@ else
 		fi
 
 		if [ -e $LFNAME ] && [ $OFFSET == $LFSIZE ]; then
+			echo
 			echo "$(date): Flushing harvested $LFNAME ($LFSIZE)"
 			rm "$LFNAME"
 		else
-			sleep 30
-			exec $0 $1
+			echo -n .
+			sleep 60
+			exec $0 "$1"
 		fi
 	else
 		echo "Error: registry file not found."
